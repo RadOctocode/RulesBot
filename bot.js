@@ -36,6 +36,10 @@ client.on('message', msg =>{
 			reqURL = reqURL.concat(processedSpellName);
 			category = 1;
 		}
+		
+		else if(!checkInput(input[1])){
+			category = -1;
+		}
 
    	}
    
@@ -45,6 +49,10 @@ client.on('message', msg =>{
    			reqURL = 'http://www.dnd5eapi.co/api/conditions/';
 	   		reqURL = reqURL.concat(condName);
 			category = 2;
+		}
+
+		else if(!checkInput(input[1])){
+			category = -1;
 		}
 	}
 	if(category != 0){
@@ -65,6 +73,10 @@ client.on('message', msg =>{
 				}
 				else if(category === 2){
 				       msg.channel.send("can't find that condition");
+				}
+				else if(category === -1){
+				       msg.channel.send("please use valid input!");
+
 				}
 			}
 		}	
