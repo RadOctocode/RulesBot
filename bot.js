@@ -3,6 +3,14 @@ var Discord = require('discord.js');
 const Config = require('./auth.json'); 
 
 
+function checkInput(inputtxt){
+	var acceptableCharacters = /^[a-z\A-Z\d\-_\s]+$/;
+	if(inputtxt.match(acceptableCharacters)){return true;}
+	else{return false;}
+
+}
+
+
 var client = new Discord.Client();
 
 client.on('ready', () =>{
@@ -19,7 +27,7 @@ client.on('message', msg =>{
 	let category=0;
 	
     	if(input[0] === '!spell'){
-		if(input.length > 1){
+		if(input.length > 1 && checkInput(input[1])){
 			let indexOfSpace=msg.content.indexOf(' ');
 			let unprocessedSpellName = msg.content.substr(indexOfSpace+1); 
 			let processedSpellName = unprocessedSpellName.replace(/\s+/g,'-').toLowerCase();
@@ -32,7 +40,7 @@ client.on('message', msg =>{
    	}
    
    	else if(input[0] === '!condition'){
-		if(input.length > 1){
+		if(input.length > 1 && checkInput(input[1])){
 			let condName = input[1].toLowerCase();
    			reqURL = 'http://www.dnd5eapi.co/api/conditions/';
 	   		reqURL = reqURL.concat(condName);
