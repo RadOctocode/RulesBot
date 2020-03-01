@@ -3,6 +3,9 @@
  "version": "1.0.0",
  "description": "My First Discord Bot",
  "main": "bot.js",
-"author": "RadOcto",
-"dependencies": {}
+ "author": "RadOcto",
+ "dependencies": {
+  "discord.js": "^11.6.1",
+  "xmlhttprequest": "^1.8.0"
+ }
 }

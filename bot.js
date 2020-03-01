@@ -13,45 +13,57 @@ client.on('ready', () =>{
 
 
 client.on('message', msg =>{
-   const input = msg.content.split(' ');
-   console.log(input.length);  
-
+  	const input = msg.content.split(' ');
 	
-    if(input[0] === '!spell'){
-	var spellName = input[1].replace(/\s+/g,'-').toLowerCase();
-	reqURL = reqURL.concat('http://www.dnd5eapi.co/api/spells/',spellName);
-	category = 1;
-   }
+	var reqURL="";
+	let category=0;
+	
+    	if(input[0] === '!spell'){
+		if(input.length > 1){
+			let indexOfSpace=msg.content.indexOf(' ');
+			let unprocessedSpellName = msg.content.substr(indexOfSpace+1); 
+			let processedSpellName = unprocessedSpellName.replace(/\s+/g,'-').toLowerCase();
+			processedSpellName.toLowerCase();
+			reqURL = 'http://www.dnd5eapi.co/api/spells/';
+			reqURL = reqURL.concat(processedSpellName);
+			category = 1;
+		}
+
+   	}
    
    	else if(input[0] === '!condition'){
 		if(input.length > 1){
-		var condName = input[1].toLowerCase();
-   		let reqURL = 'http://www.dnd5eapi.co/api/conditions/';
-	   	reqURL = reqURL.concat(condName);
-
+			let condName = input[1].toLowerCase();
+   			reqURL = 'http://www.dnd5eapi.co/api/conditions/';
+	   		reqURL = reqURL.concat(condName);
+			category = 2;
+		}
+	}
+	if(category != 0){
 		let request = new XMLHttpRequest();
 		request.open('GET', reqURL);
-
+	
 		request.onload = function(){
 			if(this.status == 200){
+			
 				let data = JSON.parse(this.responseText);
 				console.log(data);
 				msg.channel.send(data.desc);
-			
+				
 			}
-			else{
-				msg.channel.send("couldn't find that condition");
+			else{	
+			        if(category === 1){
+				       msg.channel.send("can't find that spell");
+				}
+				else if(category === 2){
+				       msg.channel.send("can't find that condition");
+				}
 			}
-		}
-
-			request.send();
-		}
+		}	
+	
+		request.send();
 
 	}
-   
-	
-   
-
 
 });
 
