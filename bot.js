@@ -19,14 +19,10 @@ function checkInput(inputtxt){
 	return false;
 }
 
-function normalizeInput(inputtxt){
- console.log("normalize text");
-}
-
 var client = new Discord.Client();
 
 client.on('ready', () =>{
-
+   
    console.log('Bot on!');
 
 });
@@ -44,7 +40,6 @@ client.on('message', msg =>{
 			let indexOfSpace=msg.content.indexOf(' ');
 			let unprocessedSpellName = msg.content.substr(indexOfSpace+1); 
 			let processedSpellName = unprocessedSpellName.replace(/\s+/g,'-').toLowerCase();
-			processedSpellName.toLowerCase();
 			reqURL = reqURL.concat(processedSpellName);
 			category = SPELL;
 		}
