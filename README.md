@@ -11,7 +11,7 @@ This discord bot uses [node.js](nodejs.org) and [dnd5eapi](www.dnd5eapi.co)
 * create a discord bot and get its [token](https://www.writebots.com/discord-bot-token/)
 * create auth.json file with the following where bot token is the token from the previous step
 
-   `"token": "bot token"`
+   `{"token": "bot token"}`
 
 ## Usage and Syntax
 Reference a condition:
