@@ -12,12 +12,15 @@ function checkInput(inputtxt){
 	return false;
 }
 
+function normalizeInput(inputtxt){
+ console.log("normalize text");
+}
 
 var client = new Discord.Client();
 
 client.on('ready', () =>{
 
-   console.log('Logged in as $(client.user.tag)!');
+   console.log('Bot on!');
 
 });
 
@@ -25,50 +28,50 @@ client.on('ready', () =>{
 client.on('message', msg =>{
   	const input = msg.content.split(' ');
 	
-	var reqURL="";
+	var reqURL='http://www.dnd5eapi.co/api/';
 	let category=0;
 	
     	if(input[0] === '!spell'){
+		reqURL = reqURL.concat('spells/');
 		if(input.length > 1 && checkInput(input[1])){
 			let indexOfSpace=msg.content.indexOf(' ');
 			let unprocessedSpellName = msg.content.substr(indexOfSpace+1); 
 			let processedSpellName = unprocessedSpellName.replace(/\s+/g,'-').toLowerCase();
 			processedSpellName.toLowerCase();
-			reqURL = 'http://www.dnd5eapi.co/api/spells/';
 			reqURL = reqURL.concat(processedSpellName);
 			category = 1;
 		}
 		
-		else if(!checkInput(input[1])){
+		else if(input.length === 1 || !checkInput(input[1])){
 			category = -1;
 		}
 
    	}
    
    	if(input[0] === '!condition'){
+		reqURL = reqURL.concat('conditions/');
 		if(input.length > 1 && checkInput(input[1])){
 			let condName = input[1].toLowerCase();
-   			reqURL = 'http://www.dnd5eapi.co/api/conditions/';
 	   		reqURL = reqURL.concat(condName);
 			category = 2;
 		}
 
-		else if(!checkInput(input[1])){
+		else if(input.length === 1 || !checkInput(input[1])){
 			category = -1;
 		}
 	}
 
 	if(input[0] === '!skill'){
+		
+		reqURL = reqURL.concat('skills/');
 		if(input.length > 1 && checkInput(input[1])){
 			let skillName = input[1].toLowerCase();
-			reqURL = 'http://www.dnd5eapi.co/api/skills/';
 			reqURL = reqURL.concat(skillName);
 			category = 3;
-			console.log(reqURL);
 
 		}
 
-		else if(!checkInput(input[1])){
+		else if(input.length === 1 || !checkInput(input[1])){
 			category = -1;
 		}
 
