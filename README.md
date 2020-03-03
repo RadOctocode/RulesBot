@@ -9,8 +9,8 @@ This discord bot uses [node.js](nodejs.org) and [dnd5eapi](www.dnd5eapi.co)
 * this bot uses node.js, [please look at the node.js website](nodejs.org)
 * run the command `npm install` and it should install all the node packages needed
 * create a discord bot and get its [token](https://www.writebots.com/discord-bot-token/)
-* create auth.json file with the following where bot token is actual
-... `"token": "bot token"`
+* create auth.json file with the following where bot token is the token from the previous step
+   `"token": "bot token"`
 
 ## Usage and Syntax
 Reference a condition:
