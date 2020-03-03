@@ -2,6 +2,13 @@ var XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest;
 var Discord = require('discord.js');
 const Config = require('./auth.json'); 
 
+enum Codes {
+	BLANK = 0,
+	CONDITION = 2,
+	ERROR = -1,
+	SPELL = 1,
+	SKILL = 3,
+};
 
 function checkInput(inputtxt){
 	var acceptableCharacters = /^[a-z\A-Z\d\-_\s]+$/;
@@ -29,7 +36,7 @@ client.on('message', msg =>{
   	const input = msg.content.split(' ');
 	
 	var reqURL='http://www.dnd5eapi.co/api/';
-	let category=0;
+	let category=BLANK;
 	
     	if(input[0] === '!spell'){
 		reqURL = reqURL.concat('spells/');
@@ -39,11 +46,11 @@ client.on('message', msg =>{
 			let processedSpellName = unprocessedSpellName.replace(/\s+/g,'-').toLowerCase();
 			processedSpellName.toLowerCase();
 			reqURL = reqURL.concat(processedSpellName);
-			category = 1;
+			category = SPELL;
 		}
 		
 		else if(input.length === 1 || !checkInput(input[1])){
-			category = -1;
+			category = ERROR;
 		}
 
    	}
@@ -53,11 +60,11 @@ client.on('message', msg =>{
 		if(input.length > 1 && checkInput(input[1])){
 			let condName = input[1].toLowerCase();
 	   		reqURL = reqURL.concat(condName);
-			category = 2;
+			category = CONDITION;
 		}
 
 		else if(input.length === 1 || !checkInput(input[1])){
-			category = -1;
+			category = ERROR;
 		}
 	}
 
@@ -67,17 +74,17 @@ client.on('message', msg =>{
 		if(input.length > 1 && checkInput(input[1])){
 			let skillName = input[1].toLowerCase();
 			reqURL = reqURL.concat(skillName);
-			category = 3;
+			category = SKILL;
 
 		}
 
 		else if(input.length === 1 || !checkInput(input[1])){
-			category = -1;
+			category = ERROR;
 		}
 
 	}
 
-	if(category != 0){
+	if(category != BLANK){
 
 		let request = new XMLHttpRequest();
 		request.open('GET', reqURL);
@@ -101,17 +108,17 @@ client.on('message', msg =>{
 				}
 			}
 			else{	
-			        if(category === 1){
+			        if(category === SPELL){
 				       msg.channel.send("can't find that spell");
 				}
-				else if(category === 2){
+				else if(category === CONDITION){
 				       msg.channel.send("can't find that condition");
 				}
 
-				else if(category === 3){
+				else if(category === SKILL){
 				       msg.channel.send("can't find that skill");
 				}
-				else if(category === -1){
+				else if(category === ERROR){
 				       msg.channel.send("please use valid input!");
 
 				}
