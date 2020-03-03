@@ -5,9 +5,11 @@ const Config = require('./auth.json');
 
 function checkInput(inputtxt){
 	var acceptableCharacters = /^[a-z\A-Z\d\-_\s]+$/;
-	if(inputtxt.match(acceptableCharacters)){return true;}
-	else{return false;}
-
+	if(inputtxt != ""){
+		if(inputtxt.match(acceptableCharacters)){return true;}
+		else{return false;}
+	}
+	return false;
 }
 
 
@@ -43,7 +45,7 @@ client.on('message', msg =>{
 
    	}
    
-   	else if(input[0] === '!condition'){
+   	if(input[0] === '!condition'){
 		if(input.length > 1 && checkInput(input[1])){
 			let condName = input[1].toLowerCase();
    			reqURL = 'http://www.dnd5eapi.co/api/conditions/';
@@ -55,17 +57,45 @@ client.on('message', msg =>{
 			category = -1;
 		}
 	}
+
+	if(input[0] === '!skill'){
+		if(input.length > 1 && checkInput(input[1])){
+			let skillName = input[1].toLowerCase();
+			reqURL = 'http://www.dnd5eapi.co/api/skills/';
+			reqURL = reqURL.concat(skillName);
+			category = 3;
+			console.log(reqURL);
+
+		}
+
+		else if(!checkInput(input[1])){
+			category = -1;
+		}
+
+	}
+
 	if(category != 0){
+
 		let request = new XMLHttpRequest();
 		request.open('GET', reqURL);
 	
 		request.onload = function(){
 			if(this.status == 200){
-			
-				let data = JSON.parse(this.responseText);
-				console.log(data);
-				msg.channel.send(data.desc);
 				
+				let data = JSON.parse(this.responseText);
+
+				console.log(data);
+				if(category === 3){
+					let finalMsg = "roll ";
+					let abilityScore = String(data.ability_score.name); 
+					console.log(data.ability_score.name);
+					finalMsg=finalMsg.concat(abilityScore);
+					msg.channel.send(finalMsg);
+				}
+
+				else{	
+					msg.channel.send(data.desc);
+				}
 			}
 			else{	
 			        if(category === 1){
@@ -73,6 +103,10 @@ client.on('message', msg =>{
 				}
 				else if(category === 2){
 				       msg.channel.send("can't find that condition");
+				}
+
+				else if(category === 3){
+				       msg.channel.send("can't find that skill");
 				}
 				else if(category === -1){
 				       msg.channel.send("please use valid input!");
