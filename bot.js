@@ -2,13 +2,11 @@ var XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest;
 var Discord = require('discord.js');
 const Config = require('./auth.json'); 
 
-enum Codes {
-	BLANK = 0,
-	CONDITION = 2,
-	ERROR = -1,
-	SPELL = 1,
-	SKILL = 3,
-};
+const BLANK = 0;
+const CONDITION = 1;
+const ERROR = 2;
+const SPELL = 3;
+const SKILL = 4;
 
 function checkInput(inputtxt){
 	var acceptableCharacters = /^[a-z\A-Z\d\-_\s]+$/;
@@ -18,6 +16,42 @@ function checkInput(inputtxt){
 	}
 	return false;
 }
+
+function determineCategory(inputtxt,parameter){
+	let indexOfSpace=inputtxt.indexOf(' ');
+	let unprocessedName = inputtxt.substr(0,indexOfSpace);
+	if(!parameter){
+		return ERROR;
+	}
+	switch(unprocessedName){
+		case '!spell':
+			return SPELL; 
+			break;
+		case '!condition':
+			return CONDITION;
+			break;
+		case '!skill':
+			return SKILL;
+			break;
+		default:
+			return BLANK;
+			
+	}
+
+}//return EMUN
+
+function processParameter(inputtxt){
+	let indexOfSpace=inputtxt.indexOf(' ');
+	let unprocessedName = inputtxt.substr(indexOfSpace+1); 
+	let processedName = unprocessedName.replace(/\s+/g,'-').toLowerCase();
+	if(checkInput(processedName)){
+		return processedName;
+	}
+	else{
+		return "";
+	}
+
+}//return cleaned parameter 
 
 var client = new Discord.Client();
 
@@ -32,51 +66,27 @@ client.on('message', msg =>{
   	const input = msg.content.split(' ');
 	
 	var reqURL='http://www.dnd5eapi.co/api/';
-	let category=BLANK;
+
+	let parameter = processParameter(msg.content);
+	let category = determineCategory(msg.content,parameter);
 	
-    	if(input[0] === '!spell'){
-		reqURL = reqURL.concat('spells/');
-		if(input.length > 1 && checkInput(input[1])){
-			let indexOfSpace=msg.content.indexOf(' ');
-			let unprocessedSpellName = msg.content.substr(indexOfSpace+1); 
-			let processedSpellName = unprocessedSpellName.replace(/\s+/g,'-').toLowerCase();
-			reqURL = reqURL.concat(processedSpellName);
-			category = SPELL;
-		}
-		
-		else if(input.length === 1 || !checkInput(input[1])){
-			category = ERROR;
-		}
+	if(category != ERROR && category != BLANK){
+		switch(category){
+			case SPELL:
+				reqURL = reqURL.concat('spells/');
+				break;
 
-   	}
-   
-   	if(input[0] === '!condition'){
-		reqURL = reqURL.concat('conditions/');
-		if(input.length > 1 && checkInput(input[1])){
-			let condName = input[1].toLowerCase();
-	   		reqURL = reqURL.concat(condName);
-			category = CONDITION;
-		}
+			case SKILL:
+				reqURL = reqURL.concat('skills/');
+				break;
 
-		else if(input.length === 1 || !checkInput(input[1])){
-			category = ERROR;
-		}
-	}
-
-	if(input[0] === '!skill'){
-		
-		reqURL = reqURL.concat('skills/');
-		if(input.length > 1 && checkInput(input[1])){
-			let skillName = input[1].toLowerCase();
-			reqURL = reqURL.concat(skillName);
-			category = SKILL;
+			case CONDITION:
+				reqURL = reqURL.concat('conditions/');
+				break;
 
 		}
-
-		else if(input.length === 1 || !checkInput(input[1])){
-			category = ERROR;
-		}
-
+	
+		reqURL = reqURL.concat(parameter);
 	}
 
 	if(category != BLANK){
@@ -90,10 +100,9 @@ client.on('message', msg =>{
 				let data = JSON.parse(this.responseText);
 
 				console.log(data);
-				if(category === 3){
+				if(category === SKILL){
 					let finalMsg = "roll ";
 					let abilityScore = String(data.ability_score.name); 
-					console.log(data.ability_score.name);
 					finalMsg=finalMsg.concat(abilityScore);
 					msg.channel.send(finalMsg);
 				}
